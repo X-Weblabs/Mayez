@@ -1,11 +1,6 @@
 {
-  "plugins": ["react-hooks"],
-  "extends": [
-    "react-app",
-    "plugin:react-hooks/recommended"
-  ],
+  "extends": ["react-app"],
   "rules": {
-    "no-unused-vars": "warn",  // instead of "error"
-    "react-hooks/exhaustive-deps": "warn"
+    "no-unused-vars": "warn"
   }
 }
