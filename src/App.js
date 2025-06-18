@@ -56,19 +56,22 @@ export const Navigation = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4 align-items-center">
-              {navItems.map((item, index) => (
-                <motion.a
-                  key={item}
-                  href={item.toLowerCase()}
-                  className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+            {navItems.map((item, index) => (
+              <Link
+                key={item}
+                to={`/${item.toLowerCase()}`} // ✅ Proper React Router navigation
+                className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+              >
+                <motion.div
                   whileHover={{ y: -2 }}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
                   {item}
-                </motion.a>
-              ))}
+                </motion.div>
+              </Link>
+            ))}
 
               {/* Navbar actions */}
               <div className="navbar-actions">
