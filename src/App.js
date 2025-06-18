@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom"
 import { AuthProvider, useAuth } from "./contexts/AuthContext"
 import { TournamentProvider } from "./contexts/TournamentContext"
-import Navbar from "./components/Navbar"
 import Home from "./components/Home"
 import Login from "./components/Login"
 import Register from "./components/Register"
@@ -21,12 +20,11 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import "./App.css"
 import { useState } from "react"
 import { motion } from 'framer-motion';
-import { ChevronDown, Users, Trophy, Play, Star, MapPin, Clock } from 'lucide-react';
+import { ChevronDown} from 'lucide-react';
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation()
-  const { currentUser, logout, userProfile } = useAuth()
+  const { currentUser, logout } = useAuth()
 
   const handleLogout = async () => {
     try {
