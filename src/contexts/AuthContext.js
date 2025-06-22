@@ -8,7 +8,7 @@ import {
   onAuthStateChanged,
   updateProfile,
 } from "firebase/auth"
-import { doc, setDoc, getDoc } from "firebase/firestore"
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"
 import { auth, db } from "../firebase/config"
 
 const AuthContext = createContext()
@@ -23,31 +23,52 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   const signup = async (email, password, userData) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-    const user = userCredential.user
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+      const user = userCredential.user
 
-    // Update display name
-    await updateProfile(user, {
-      displayName: `${userData.firstName} ${userData.lastName}`,
-    })
+      // Update display name
+      await updateProfile(user, {
+        displayName: `${userData.firstName} ${userData.lastName}`,
+        photoURL: userData.profileImage || null,
+      })
 
-    // Create user profile in Firestore
-    await setDoc(doc(db, "users", user.uid), {
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      email: userData.email,
-      phone: userData.phone,
-      dateOfBirth: userData.dateOfBirth,
-      skillLevel: userData.skillLevel,
-      isAdmin: false,
-      createdAt: new Date(),
-      tournaments: [],
-      wins: 0,
-      losses: 0,
-      totalGames: 0,
-    })
+      // Create user profile document with all data including profile image
+      const userProfileData = {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phone: userData.phone,
+        dateOfBirth: userData.dateOfBirth,
+        skillLevel: userData.skillLevel || "beginner",
+        profileImage: userData.profileImage || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isAdmin: false,
+        tournaments: [],
+        wins: 0,
+        losses: 0,
+        ranking: 1000,
+        // Additional fields for tournament system
+        totalMatches: 0,
+        winRate: 0,
+        favoriteGame: "",
+        bio: "",
+        location: "",
+        achievements: [],
+        isActive: true,
+      }
 
-    return userCredential
+      await setDoc(doc(db, "users", user.uid), userProfileData)
+
+      // Set the user profile in state
+      setUserProfile(userProfileData)
+
+      return userCredential
+    } catch (error) {
+      console.error("Error during signup:", error)
+      throw error
+    }
   }
 
   const login = (email, password) => {
@@ -55,22 +76,80 @@ export const AuthProvider = ({ children }) => {
   }
 
   const logout = () => {
+    setUserProfile(null)
     return signOut(auth)
   }
 
   const fetchUserProfile = async (uid) => {
-    const docRef = doc(db, "users", uid)
-    const docSnap = await getDoc(docRef)
-    if (docSnap.exists()) {
-      setUserProfile(docSnap.data())
+    try {
+      const docRef = doc(db, "users", uid)
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        const profileData = docSnap.data()
+        setUserProfile(profileData)
+        return profileData
+      } else {
+        console.log("No user profile found")
+        setUserProfile(null)
+        return null
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error)
+      setUserProfile(null)
+      return null
+    }
+  }
+
+  const updateUserProfile = async (uid, updates) => {
+    try {
+      const userRef = doc(db, "users", uid)
+      const updateData = {
+        ...updates,
+        updatedAt: new Date(),
+      }
+
+      await updateDoc(userRef, updateData)
+
+      // Update local state
+      setUserProfile((prev) => (prev ? { ...prev, ...updateData } : null))
+
+      // Update Firebase Auth profile if display name or photo changed
+      if (currentUser && (updates.firstName || updates.lastName || updates.profileImage !== undefined)) {
+        const authUpdates = {}
+
+        if (updates.firstName || updates.lastName) {
+          const firstName = updates.firstName || userProfile?.firstName || ""
+          const lastName = updates.lastName || userProfile?.lastName || ""
+          authUpdates.displayName = `${firstName} ${lastName}`.trim()
+        }
+
+        if (updates.profileImage !== undefined) {
+          authUpdates.photoURL = updates.profileImage || null
+        }
+
+        if (Object.keys(authUpdates).length > 0) {
+          await updateProfile(currentUser, authUpdates)
+        }
+      }
+
+      return true
+    } catch (error) {
+      console.error("Error updating user profile:", error)
+      throw error
+    }
+  }
+
+  const refreshUserProfile = async () => {
+    if (currentUser) {
+      await fetchUserProfile(currentUser.uid)
     }
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user)
       if (user) {
-        fetchUserProfile(user.uid)
+        await fetchUserProfile(user.uid)
       } else {
         setUserProfile(null)
       }
@@ -87,6 +166,9 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     fetchUserProfile,
+    updateUserProfile,
+    refreshUserProfile,
+    loading,
   }
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>

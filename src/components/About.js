@@ -11,33 +11,6 @@ const About = () => {
     { icon: Award, label: "Prize Money Distributed", value: "$2M+" },
   ]
 
-  const team = [
-    {
-      name: "Michael Rodriguez",
-      role: "Tournament Director",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-      bio: "20+ years in professional pool tournament organization",
-    },
-    {
-      name: "Sarah Chen",
-      role: "Operations Manager",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786",
-      bio: "Expert in event logistics and player relations",
-    },
-    {
-      name: "David Thompson",
-      role: "Technical Director",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-      bio: "Innovating tournament technology and live streaming",
-    },
-    {
-      name: "Lisa Martinez",
-      role: "Player Development",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-      bio: "Former professional player and youth program coordinator",
-    },
-  ]
-
   const values = [
     {
       icon: Target,
@@ -191,42 +164,6 @@ const About = () => {
             </div>
           </div>
 
-          {/* Team */}
-          <div className="mb-16">
-            <motion.h2
-              className="text-3xl font-bold text-white text-center mb-12"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              Meet Our Team
-            </motion.h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {team.map((member, index) => (
-                <motion.div
-                  key={member.name}
-                  className="bg-gray-800 rounded-lg overflow-hidden"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  <img
-                    src={member.image || "/placeholder.svg"}
-                    alt={member.name}
-                    className="w-full h-64 object-cover"
-                  />
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-white mb-2">{member.name}</h3>
-                    <p className="text-red-500 font-semibold mb-3">{member.role}</p>
-                    <p className="text-gray-400 text-sm">{member.bio}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
           {/* Contact Information */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -237,18 +174,6 @@ const About = () => {
             <h2 className="text-3xl font-bold text-white text-center mb-8">Get In Touch</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <MapPin className="h-8 w-8 text-red-500 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">Headquarters</h3>
-                <p className="text-gray-400">
-                  123 Tournament Avenue
-                  <br />
-                  Las Vegas, NV 89101
-                  <br />
-                  United States
-                </p>
-              </div>
-
               <div className="text-center">
                 <Users className="h-8 w-8 text-red-500 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-white mb-2">Contact Us</h3>

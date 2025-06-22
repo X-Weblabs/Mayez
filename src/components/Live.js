@@ -13,38 +13,38 @@ const Live = () => {
   const [isMuted, setIsMuted] = useState(false)
 
   // Mock live streams data
-  const liveStreams = [
-    {
-      id: 1,
-      title: "Mayez Championship Finals - Table 1",
-      player1: "John Smith",
-      player2: "Mike Johnson",
-      viewers: 1247,
-      youtubeId: "dQw4w9WgXcQ",
-      status: "live",
-      score: { player1: 3, player2: 2 },
-    },
-    {
-      id: 2,
-      title: "Elite Masters Semi-Final - Table 2",
-      player1: "Sarah Wilson",
-      player2: "David Brown",
-      viewers: 892,
-      youtubeId: "dQw4w9WgXcQ",
-      status: "live",
-      score: { player1: 1, player2: 4 },
-    },
-    {
-      id: 3,
-      title: "Pro Series Quarter Final - Table 3",
-      player1: "Alex Chen",
-      player2: "Maria Garcia",
-      viewers: 634,
-      youtubeId: "dQw4w9WgXcQ",
-      status: "live",
-      score: { player1: 2, player2: 1 },
-    },
-  ]
+const liveStreams = [
+  {
+    id: 1,
+    title: "Mayez Championship Finals - Table 1",
+    player1: "Steven Paswani",
+    player2: "Clemence Gutsa",
+    viewers: 1247,
+    youtubeId: "OdrBujOwJQA",
+    status: "live",
+    score: { player1: 3, player2: 2 },
+  },
+  {
+    id: 2,
+    title: "Elite Masters Semi-Final - Table 2",
+    player1: "Stanley Ngwenya",
+    player2: "Lindani Gumbo",
+    viewers: 892,
+    youtubeId: "OdrBujOwJQA",
+    status: "live",
+    score: { player1: 1, player2: 4 },
+  },
+  {
+    id: 3,
+    title: "Pro Series Quarter Final - Table 3",
+    player1: "Craig Nkala",
+    player2: "Norman Moyo",
+    viewers: 634,
+    youtubeId: "OdrBujOwJQA",
+    status: "live",
+    score: { player1: 2, player2: 1 },
+  },
+]
 
   // Mock chat messages
   useEffect(() => {
@@ -83,7 +83,7 @@ const Live = () => {
     >
       <div className="relative">
         <img
-          src={`/placeholder.svg?height=200&width=400`}
+          src={`https://store-images.s-microsoft.com/image/apps.33237.14438434831273183.b4669c50-53c5-4e93-b3e7-5c2db013a7ae.1d970cdb-55d8-44b8-96f9-505e9c82dce4?q=90&w=480&h=270`}
           alt={stream.title}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -274,10 +274,9 @@ const Live = () => {
                 <div className="bg-gray-800 rounded-lg overflow-hidden">
                   <div className="divide-y divide-gray-700">
                     {[
-                      { time: "2:00 PM", match: "Championship Semi-Final - Table 1", players: "Smith vs Johnson" },
-                      { time: "4:00 PM", match: "Masters Quarter-Final - Table 2", players: "Wilson vs Brown" },
-                      { time: "6:00 PM", match: "Pro Series Final - Table 3", players: "Chen vs Garcia" },
-                      { time: "8:00 PM", match: "Elite Championship - Table 1", players: "Davis vs Martinez" },
+                      { time: "2:00 PM", match: "Championship Semi-Final - Table 1", players: "Lindani vs Craig" },
+                      { time: "4:00 PM", match: "Masters Quarter-Final - Table 2", players: "Norman vs Steven" },
+                      { time: "6:00 PM", match: "Pro Series Final - Table 3", players: "Stanely vs Lindani" },
                     ].map((schedule, index) => (
                       <div key={index} className="p-4 flex items-center justify-between">
                         <div className="flex items-center space-x-4">

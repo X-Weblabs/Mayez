@@ -7,7 +7,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyB9DpSemUQoyaV52FrZXXlzf37o8OH17Z0",
   authDomain: "mayez-tournament.firebaseapp.com",
   projectId: "mayez-tournament",
-  storageBucket: "mayez-tournament.firebasestorage.app",
+  storageBucket: "mayez-tournament.appspot.com",
   messagingSenderId: "412595191401",
   appId: "1:412595191401:web:0e6cc0b43833a8a9c2acf8"
 };

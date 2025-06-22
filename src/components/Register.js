@@ -4,6 +4,8 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { useAuth } from "../contexts/AuthContext"
+import ProfileImageUpload from "../components/ProfileImageUpload"
+
 import {
   Eye,
   EyeOff,
@@ -28,6 +30,7 @@ const Register = () => {
     password: "",
     confirmPassword: "",
     skillLevel: "beginner",
+    profileImage: null,
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -44,11 +47,19 @@ const Register = () => {
     })
   }
 
+  const handleImageUpload = (imageUrl) => {
+    setFormData((prev) => ({
+      ...prev,
+      profileImage: imageUrl,
+    }))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
+    // Validation
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match")
       setLoading(false)
@@ -61,11 +72,38 @@ const Register = () => {
       return
     }
 
+    if (!formData.firstName.trim() || !formData.lastName.trim()) {
+      setError("First name and last name are required")
+      setLoading(false)
+      return
+    }
+
+    if (!formData.phone.trim()) {
+      setError("Phone number is required")
+      setLoading(false)
+      return
+    }
+
+    if (!formData.dateOfBirth) {
+      setError("Date of birth is required")
+      setLoading(false)
+      return
+    }
+
     try {
       await signup(formData.email, formData.password, formData)
       navigate("/dashboard")
     } catch (error) {
-      setError("Failed to create account. Please try again.")
+      console.error("Registration error:", error)
+      if (error.code === "auth/email-already-in-use") {
+        setError("An account with this email already exists")
+      } else if (error.code === "auth/weak-password") {
+        setError("Password is too weak")
+      } else if (error.code === "auth/invalid-email") {
+        setError("Invalid email address")
+      } else {
+        setError("Failed to create account. Please try again.")
+      }
     }
     setLoading(false)
   }
@@ -136,12 +174,21 @@ const Register = () => {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Profile Image Upload */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+              >
+                <ProfileImageUpload onImageUpload={handleImageUpload} currentImage={formData.profileImage} />
+              </motion.div>
+
               {/* Name Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5, duration: 0.5 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
                 >
                   <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
                   <div className="relative">
@@ -161,7 +208,7 @@ const Register = () => {
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6, duration: 0.5 }}
+                  transition={{ delay: 0.7, duration: 0.5 }}
                 >
                   <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
                   <div className="relative">
@@ -183,7 +230,7 @@ const Register = () => {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
               >
                 <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
                 <div className="relative">
@@ -205,7 +252,7 @@ const Register = () => {
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.8, duration: 0.5 }}
+                  transition={{ delay: 0.9, duration: 0.5 }}
                 >
                   <label className="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
                   <div className="relative">
@@ -225,7 +272,7 @@ const Register = () => {
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.9, duration: 0.5 }}
+                  transition={{ delay: 1.0, duration: 0.5 }}
                 >
                   <label className="block text-sm font-medium text-gray-300 mb-2">Date of Birth</label>
                   <div className="relative">
@@ -246,7 +293,7 @@ const Register = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1, duration: 0.5 }}
+                transition={{ delay: 1.1, duration: 0.5 }}
               >
                 <label className="block text-sm font-medium text-gray-300 mb-3">Skill Level</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -292,7 +339,7 @@ const Register = () => {
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1.1, duration: 0.5 }}
+                  transition={{ delay: 1.2, duration: 0.5 }}
                 >
                   <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
                   <div className="relative">
@@ -319,7 +366,7 @@ const Register = () => {
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1.2, duration: 0.5 }}
+                  transition={{ delay: 1.3, duration: 0.5 }}
                 >
                   <label className="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
                   <div className="relative">
@@ -352,7 +399,7 @@ const Register = () => {
                 whileTap={{ scale: 0.98 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.3, duration: 0.5 }}
+                transition={{ delay: 1.4, duration: 0.5 }}
               >
                 {loading ? (
                   <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -369,7 +416,7 @@ const Register = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.4, duration: 0.5 }}
+              transition={{ delay: 1.5, duration: 0.5 }}
               className="mt-8 text-center"
             >
               <p className="text-gray-400">
@@ -385,7 +432,7 @@ const Register = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.6, duration: 0.5 }}
+            transition={{ delay: 1.7, duration: 0.5 }}
             className="mt-8 text-center"
           >
             <p className="text-gray-500 text-sm">

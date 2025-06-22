@@ -134,7 +134,7 @@ const Home = () => {
       duration: "42:30",
       views: "125K",
       image: "https://images.unsplash.com/photo-1627257060697-acfbecf5d9a2",
-      youtubeId: "dQw4w9WgXcQ",
+      youtubeId: "OdrBujOwJQA",
     },
     {
       id: 2,
@@ -142,7 +142,7 @@ const Home = () => {
       duration: "35:45",
       views: "89K",
       image: "https://images.pexels.com/photos/6253979/pexels-photo-6253979.jpeg",
-      youtubeId: "dQw4w9WgXcQ",
+      youtubeId: "OdrBujOwJQA",
     },
     {
       id: 3,
@@ -150,7 +150,7 @@ const Home = () => {
       duration: "28:15",
       views: "156K",
       image: "https://images.pexels.com/photos/16074/pexels-photo.jpg",
-      youtubeId: "dQw4w9WgXcQ",
+      youtubeId: "OdrBujOwJQA",
     },
     {
       id: 4,
@@ -158,7 +158,7 @@ const Home = () => {
       duration: "18:20",
       views: "67K",
       image: "https://images.unsplash.com/photo-1599685315659-bc876da49fe5",
-      youtubeId: "dQw4w9WgXcQ",
+      youtubeId: "OdrBujOwJQA",
     },
   ]
 

@@ -1,4 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom"
+"use client"
+
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
 import { AuthProvider, useAuth } from "./contexts/AuthContext"
 import { TournamentProvider } from "./contexts/TournamentContext"
 import Home from "./components/Home"
@@ -19,11 +21,11 @@ import AdminPanel from "./components/AdminPanel"
 import ProtectedRoute from "./components/ProtectedRoute"
 import "./App.css"
 import { useState } from "react"
-import { motion } from 'framer-motion';
-import { ChevronDown} from 'lucide-react';
+import { motion } from "framer-motion"
+import { ChevronDown } from "lucide-react"
 
 export const Navigation = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { currentUser, logout } = useAuth()
 
   const handleLogout = async () => {
@@ -34,10 +36,7 @@ export const Navigation = () => {
     }
   }
 
-  const navItems = [
-    'HOME', 'NEWS', 'TOURNAMENTS', 'CALENDAR', 'LIVE', 
-    'PLAYERS', 'RULES', 'HISTORY', 'ABOUT'
-  ];
+  const navItems = ["HOME", "NEWS", "TOURNAMENTS", "CALENDAR", "LIVE", "PLAYERS", "RULES", "HISTORY", "ABOUT"]
 
   return (
     <nav className="bg-black/95 backdrop-blur-sm fixed w-full z-50 border-b border-gray-800 mt-2">
@@ -45,10 +44,7 @@ export const Navigation = () => {
         <div className="flex align-items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <motion.div 
-              className="text-white font-bold text-xl"
-              whileHover={{ scale: 1.05 }}
-            >
+            <motion.div className="text-white font-bold text-xl" whileHover={{ scale: 1.05 }}>
               MAYEZ<span className="text-red-500">TOURNAMENT</span>
             </motion.div>
           </div>
@@ -56,22 +52,22 @@ export const Navigation = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4 align-items-center">
-            {navItems.map((item, index) => (
-              <Link
-                key={item}
-                to={`/${item.toLowerCase()}`} // ✅ Proper React Router navigation
-                className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-              >
-                <motion.div
-                  whileHover={{ y: -2 }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+              {navItems.map((item, index) => (
+                <Link
+                  key={item}
+                  to={`/${item.toLowerCase()}`} // ✅ Proper React Router navigation
+                  className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
                 >
-                  {item}
-                </motion.div>
-              </Link>
-            ))}
+                  <motion.div
+                    whileHover={{ y: -2 }}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    {item}
+                  </motion.div>
+                </Link>
+              ))}
 
               {/* Navbar actions */}
               <div className="navbar-actions">
@@ -86,14 +82,16 @@ export const Navigation = () => {
                   </>
                 ) : (
                   <>
-                    <Link to="/login"
+                    <Link
+                      to="/login"
                       className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
                       LOGIN
                     </Link>
-                    <Link to="/register"
+                    <Link
+                      to="/register"
                       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -105,9 +103,7 @@ export const Navigation = () => {
               </div>
 
               {/* Login/Register Buttons */}
-              <div className="hidden md:flex items-center space-x-4">
-              
-              </div>
+              <div className="hidden md:flex items-center space-x-4"></div>
             </div>
           </div>
 
@@ -117,44 +113,68 @@ export const Navigation = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-400 hover:text-white focus:outline-none focus:text-white"
             >
-              <ChevronDown className={`h-6 w-6 transform transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`h-6 w-6 transform transition-transform ${isMenuOpen ? "rotate-180" : ""}`} />
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <motion.div 
+          <motion.div
             className="md:hidden"
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
           >
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-900">
               {navItems.map((item) => (
-                <a
+                <Link
                   key={item}
-                  href={item.toLowerCase()}
+                  to={`/${item.toLowerCase()}`}
                   className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   {item}
-                </a>
+                </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-4">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                  LOGIN
-                </button>
-                <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                  REGISTER
-                </button>
+                {currentUser ? (
+                  <>
+                    <Link to="/dashboard" className="btn btn-outline btn-sm" onClick={() => setIsMenuOpen(false)}>
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleLogout()
+                        setIsMenuOpen(false)
+                      }}
+                      className="btn btn-primary btn-sm"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link to="/register" className="btn btn-primary btn-sm" onClick={() => setIsMenuOpen(false)}>
+                      Register
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
         )}
       </div>
     </nav>
-  );
-};
+  )
+}
 
 function App() {
   return (

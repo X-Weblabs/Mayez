@@ -61,7 +61,6 @@ const Payment = () => {
       name: "Credit/Debit Card",
       icon: CreditCard,
       description: "Pay with Visa, Mastercard, or American Express",
-      fees: "2.9% + $0.30",
       color: "bg-blue-600",
     },
     {
@@ -69,7 +68,6 @@ const Payment = () => {
       name: "EcoCash",
       icon: Smartphone,
       description: "Pay with your EcoCash mobile wallet",
-      fees: "1.5%",
       color: "bg-green-600",
     },
     {
@@ -77,7 +75,6 @@ const Payment = () => {
       name: "OneMoney",
       icon: Smartphone,
       description: "Pay with your OneMoney mobile wallet",
-      fees: "1.5%",
       color: "bg-red-600",
     },
     {
@@ -85,7 +82,6 @@ const Payment = () => {
       name: "Paynow",
       icon: Wallet,
       description: "Pay with Paynow instant payments",
-      fees: "2.0%",
       color: "bg-purple-600",
     },
     {
@@ -93,7 +89,6 @@ const Payment = () => {
       name: "InnBucks",
       icon: DollarSign,
       description: "Pay with your InnBucks wallet",
-      fees: "1.8%",
       color: "bg-orange-600",
     },
   ]
@@ -105,30 +100,9 @@ const Payment = () => {
     }
   }, [tournamentId, tournaments])
 
-  const calculateFees = () => {
-    if (!tournament) return 0
-    const method = paymentMethods.find((m) => m.id === selectedPaymentMethod)
-    const baseAmount = tournament.entryFee
-
-    switch (selectedPaymentMethod) {
-      case "card":
-        return Math.round((baseAmount * 0.029 + 0.3) * 100) / 100
-      case "ecocash":
-        return Math.round(baseAmount * 0.015 * 100) / 100
-      case "onemoney":
-        return Math.round(baseAmount * 0.015 * 100) / 100
-      case "paynow":
-        return Math.round(baseAmount * 0.02 * 100) / 100
-      case "innbucks":
-        return Math.round(baseAmount * 0.018 * 100) / 100
-      default:
-        return 5.0
-    }
-  }
-
   const getTotalAmount = () => {
     if (!tournament) return 0
-    return tournament.entryFee + calculateFees()
+    return tournament.entryFee
   }
 
   const handleCardInputChange = (e) => {
@@ -276,7 +250,6 @@ const Payment = () => {
                 <div>
                   <h4 className="text-white font-semibold">{method.name}</h4>
                   <p className="text-gray-400 text-sm">{method.description}</p>
-                  <p className="text-gray-500 text-xs">Processing fee: {method.fees}</p>
                 </div>
               </div>
               <div
@@ -599,20 +572,10 @@ const Payment = () => {
               </div>
 
               <div className="border-t border-gray-700 pt-4">
-                <div className="flex justify-between items-center text-lg">
-                  <span className="text-gray-300">Entry Fee:</span>
-                  <span className="text-white font-bold">${tournament.entryFee}</span>
-                </div>
-                <div className="flex justify-between items-center text-lg mt-2">
-                  <span className="text-gray-300">Processing Fee:</span>
-                  <span className="text-white">${calculateFees()}</span>
-                </div>
-                <div className="border-t border-gray-700 mt-4 pt-4">
                   <div className="flex justify-between items-center text-xl font-bold">
-                    <span className="text-white">Total:</span>
-                    <span className="text-red-500">${getTotalAmount()}</span>
+                    <span className="text-white">Entry Fee:</span>
+                    <span className="text-red-500">${tournament.entryFee}</span>
                   </div>
-                </div>
               </div>
             </div>
           </div>
@@ -669,7 +632,7 @@ const Payment = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    {loading ? "Processing..." : `Pay $${getTotalAmount()}`}
+                    {loading ? "Processing..." : `Pay $${tournament.entryFee}`}
                   </motion.button>
                 </div>
               </div>

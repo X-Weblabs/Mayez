@@ -1,136 +1,74 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Search, Trophy, Calendar, Filter } from "lucide-react"
+import { collection, onSnapshot } from "firebase/firestore"
+import { db } from "../firebase/config"
 
 const Players = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [skillFilter, setSkillFilter] = useState("all")
   const [sortBy, setSortBy] = useState("ranking")
+  const [players, setPlayers] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  // Mock player data
-  const players = [
-    {
-      id: 1,
-      name: "John Smith",
-      country: "USA",
-      ranking: 1,
-      skillLevel: "professional",
-      wins: 45,
-      losses: 12,
-      totalGames: 57,
-      winRate: 79,
-      tournaments: 23,
-      prize: 125000,
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-      joinDate: "2020-01-15",
-      specialty: "9-Ball",
-    },
-    {
-      id: 2,
-      name: "Sarah Wilson",
-      country: "UK",
-      ranking: 2,
-      skillLevel: "professional",
-      wins: 42,
-      losses: 15,
-      totalGames: 57,
-      winRate: 74,
-      tournaments: 21,
-      prize: 98000,
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786",
-      joinDate: "2019-08-22",
-      specialty: "8-Ball",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      country: "Canada",
-      ranking: 3,
-      skillLevel: "professional",
-      wins: 38,
-      losses: 18,
-      totalGames: 56,
-      winRate: 68,
-      tournaments: 19,
-      prize: 87500,
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-      joinDate: "2021-03-10",
-      specialty: "Straight Pool",
-    },
-    {
-      id: 4,
-      name: "Maria Garcia",
-      country: "Spain",
-      ranking: 4,
-      skillLevel: "advanced",
-      wins: 35,
-      losses: 20,
-      totalGames: 55,
-      winRate: 64,
-      tournaments: 18,
-      prize: 76000,
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-      joinDate: "2020-11-05",
-      specialty: "9-Ball",
-    },
-    {
-      id: 5,
-      name: "David Brown",
-      country: "Australia",
-      ranking: 5,
-      skillLevel: "advanced",
-      wins: 32,
-      losses: 22,
-      totalGames: 54,
-      winRate: 59,
-      tournaments: 16,
-      prize: 65000,
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
-      joinDate: "2021-07-18",
-      specialty: "8-Ball",
-    },
-    {
-      id: 6,
-      name: "Alex Chen",
-      country: "China",
-      ranking: 6,
-      skillLevel: "advanced",
-      wins: 29,
-      losses: 25,
-      totalGames: 54,
-      winRate: 54,
-      tournaments: 15,
-      prize: 58000,
-      image: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128",
-      joinDate: "2022-01-12",
-      specialty: "Straight Pool",
-    },
-  ]
+useEffect(() => {
+  const unsubscribePlayers = onSnapshot(collection(db, "users"), (snapshot) => {
+    const playersData = snapshot.docs
+      .map((doc) => {
+        const data = doc.data()
+
+        if (data.isAdmin) return null // exclude admins
+
+        const fullName = `${data.firstName || ""} ${data.lastName || ""}`.trim()
+        const country = data.country || "Unknown"
+        const skillLevel = data.skillLevel || "beginner"
+        const winRate = data.wins && data.totalGames
+          ? Math.round((data.wins / data.totalGames) * 100)
+          : 0
+
+        return {
+          id: doc.id,
+          name: fullName,
+          country,
+          skillLevel,
+          winRate,
+          profileImage: data.profileImage || null,
+          ...data,
+        }
+      })
+      .filter(Boolean) // remove nulls (admin users)
+
+    setPlayers(playersData)
+    setLoading(false)
+  })
+
+  return () => unsubscribePlayers()
+}, [])
+
 
   const filteredPlayers = players.filter((player) => {
+    const name = player.name?.toLowerCase() || ""
+    const country = player.country?.toLowerCase() || ""
+    
     const matchesSearch =
-      player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      player.country.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesSkill = skillFilter === "all" || player.skillLevel === skillFilter
+      name.includes(searchTerm.toLowerCase()) ||
+      country.includes(searchTerm.toLowerCase())
+
+    const matchesSkill =
+      skillFilter === "all" || player.skillLevel === skillFilter
+
     return matchesSearch && matchesSkill
   })
 
   const sortedPlayers = [...filteredPlayers].sort((a, b) => {
-    switch (sortBy) {
-      case "ranking":
-        return a.ranking - b.ranking
-      case "winRate":
-        return b.winRate - a.winRate
-      case "tournaments":
-        return b.tournaments - a.tournaments
-      case "prize":
-        return b.prize - a.prize
-      default:
-        return a.ranking - b.ranking
-    }
-  })
+    if (b.wins !== a.wins) return b.wins - a.wins
+    return a.losses - b.losses
+  }).map((player, index) => ({
+    ...player,
+    ranking: index + 1
+  }))
 
   const PlayerCard = ({ player, index }) => (
     <motion.div
@@ -143,15 +81,12 @@ const Players = () => {
     >
       <div className="relative">
         <img
-          src={player.image || "/placeholder.svg"}
+          src={player.profileImage || "/placeholder.svg"}
           alt={player.name}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute top-4 left-4">
           <div className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold">#{player.ranking}</div>
-        </div>
-        <div className="absolute top-4 right-4">
-          <div className="bg-black/70 text-white px-2 py-1 rounded text-sm">{player.country}</div>
         </div>
       </div>
 
@@ -179,17 +114,21 @@ const Players = () => {
             <span className="text-gray-400">Tournaments:</span>
             <span className="text-white font-semibold">{player.tournaments}</span>
           </div>
-          <div className="flex justify-between">
+          {/* <div className="flex justify-between">
             <span className="text-gray-400">Prize Money:</span>
             <span className="text-white font-semibold">${player.prize.toLocaleString()}</span>
-          </div>
+          </div> */}
         </div>
 
         <div className="mt-4 pt-4 border-t border-gray-700">
           <div className="flex items-center justify-between text-xs text-gray-500">
             <div className="flex items-center">
               <Calendar className="h-3 w-3 mr-1" />
-              Joined {new Date(player.joinDate).getFullYear()}
+              Joined {new Date(player.createdAt.seconds * 1000).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+              })}
             </div>
             <span
               className={`px-2 py-1 rounded text-xs font-medium ${
@@ -288,7 +227,7 @@ const Players = () => {
                 </div>
                 <div className="mt-4">
                   <img
-                    src={players[1]?.image || "/placeholder.svg"}
+                    src={players[1]?.profileImage || "/placeholder.svg"}
                     alt={players[1]?.name}
                     className="w-16 h-16 rounded-full mx-auto mb-2"
                   />
@@ -309,7 +248,7 @@ const Players = () => {
                 </div>
                 <div className="mt-4">
                   <img
-                    src={players[0]?.image || "/placeholder.svg"}
+                    src={players[0]?.profileImage || "/placeholder.svg"}
                     alt={players[0]?.name}
                     className="w-20 h-20 rounded-full mx-auto mb-2 border-4 border-yellow-500"
                   />
@@ -333,7 +272,7 @@ const Players = () => {
                 </div>
                 <div className="mt-4">
                   <img
-                    src={players[2]?.image || "/placeholder.svg"}
+                    src={players[2]?.profileImage || "/placeholder.svg"}
                     alt={players[2]?.name}
                     className="w-16 h-16 rounded-full mx-auto mb-2"
                   />
