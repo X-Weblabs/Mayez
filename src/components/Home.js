@@ -386,11 +386,11 @@ const Home = () => {
         <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              PRECISION.
+              THE.
               <br />
-              COMPETITION.
+              MAYEZ.
               <br />
-              <span className="text-red-500">CHAMPIONSHIP.</span>
+              <span className="text-red-500">TOURNAMENT</span>
             </h1>
             <motion.p
               className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto"
